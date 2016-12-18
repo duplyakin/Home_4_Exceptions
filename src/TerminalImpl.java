@@ -1,5 +1,4 @@
 import Exceptions.*;
-import UI.UserInterface;
 
 /**
  * Created by Vlad on 07.11.2016.
@@ -36,22 +35,22 @@ public class TerminalImpl implements Terminal {
     private void lockAccount() {
         accountState = AccountState.LOCKED;
     }
+
     private void unlockAccount() {
         accountState = AccountState.UNLOCKED;
     }
 
 
-
     @Override
-    public boolean checkPin(int pincode) throws BadPinException {
+    public void checkPin(int pincode) throws BadPinException {
         try {
-            return  pinValidator.checkPin(pincode);
+            if (!pinValidator.checkPin(pincode)) {
+                throw new BadPinException("Incorrect pin code!");
+            }
         } catch (PinExhaustedException e) {
-            //e.printStackTrace();
             lockAccount();
             startTime = System.currentTimeMillis();
         }
-        return true;
     }
 
     // лучше выкинуть(throw) этот exception потому что перехватывать должен какой-то клиентский код,

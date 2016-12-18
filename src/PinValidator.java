@@ -13,7 +13,7 @@ public class PinValidator {
         return pinEntered;
     }
 
-    boolean checkPin(int pincode) throws BadPinException, PinExhaustedException {
+    boolean checkPin(int pincode) throws PinExhaustedException {
         pinEntered = false;
         if (CORRECT_PINCODE == pincode) {
             pinEntered = true;
@@ -24,7 +24,7 @@ public class PinValidator {
                 throw new PinExhaustedException("Three wrong tries!");
             }
             ++flag;
-            throw new BadPinException("Wrong pin! ");
+            return false;
         }
 
 

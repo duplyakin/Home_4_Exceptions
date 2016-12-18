@@ -17,7 +17,13 @@ public class UserInterfaceConsole implements UserInterface{
         return sc.nextInt();
     }
 
-    public int getCommend() {
+    @Override
+    public double getAmountOfMoney() {
+        Scanner sc = new Scanner(System.in);
+        return sc.nextDouble();
+    }
+
+    public int getCommand() {
         Scanner sc = new Scanner(System.in);
         return sc.nextInt();
     }

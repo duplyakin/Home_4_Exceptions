@@ -10,5 +10,5 @@ public interface Terminal {
 
     void withdrawMoney(double sum) throws BadSumException, IsNotLoggedInException, AccountIsLockedException;
 
-    boolean checkPin(int pincode) throws BadPinException;
+    void checkPin(int pincode) throws BadPinException;
 }

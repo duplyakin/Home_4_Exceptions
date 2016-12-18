@@ -10,5 +10,6 @@ public interface UserInterface {
     void showMessage(String message);
     String askQuestion(String message);
     int getPin();
-    int getCommend();
+    int getCommand();
+    double getAmountOfMoney();
 }
