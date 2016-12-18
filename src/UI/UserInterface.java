@@ -1,5 +1,8 @@
 package UI;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Created by Vlad on 15.11.2016.
  */
@@ -12,4 +15,5 @@ public interface UserInterface {
     int getPin();
     int getCommand();
     double getAmountOfMoney();
+
 }
