@@ -7,54 +7,49 @@ import UI.UserInterface;
 public class TerminalImpl implements Terminal {
     private final TerminalServer server;
     private final PinValidator pinValidator;
-    private final UserInterface userInterface;
     public AccountState accountState = AccountState.UNLOCKED;
     private long startTime = 0;
-    private long sleepTime = 5000;
+    private static final long SLEEP_TIME = 5000;
     private long remainedTime = startTime;
 
     // Dependency Injection (DI) constructor
-    public TerminalImpl(TerminalServer server, PinValidator pinValidator, UserInterface userInterface) {
+    public TerminalImpl(TerminalServer server, PinValidator pinValidator) {
         this.server = server;
         this.pinValidator = pinValidator;
-        this.userInterface = userInterface;
     }
 
-    public long getRemainedTime() {
-        return remainedTime;
+    private void checkTime() {
+        long passedTime = System.currentTimeMillis() - startTime;
+        if (passedTime < SLEEP_TIME) {
+            lockAccount();
+            remainedTime = 5000 - passedTime;
+        } else {
+            unlockAccount();
+        }
     }
 
     private boolean isAccountLocked() {
-        long passedTime = System.currentTimeMillis() - startTime;
-        if (passedTime < sleepTime) {
-            accountState = AccountState.LOCKED;
-            remainedTime = 5000 - passedTime;
-            return true;
-        } else {
-            accountState = AccountState.UNLOCKED;
-            return false;
-        }
+        return accountState == AccountState.LOCKED;
 
     }
 
     private void lockAccount() {
         accountState = AccountState.LOCKED;
-        startTime = System.currentTimeMillis();
+    }
+    private void unlockAccount() {
+        accountState = AccountState.UNLOCKED;
     }
 
 
+
     @Override
-    public boolean checkPin(int pincode) {
+    public boolean checkPin(int pincode) throws BadPinException {
         try {
-            pinValidator.checkPin(pincode);
-        } catch (BadPinException e) {
-            //e.printStackTrace();
-            userInterface.showError("Pin code is incorrect!");
-            return false;
+            return  pinValidator.checkPin(pincode);
         } catch (PinExhaustedException e) {
             //e.printStackTrace();
-            userInterface.showError("Three wrong tries! Your account is locked for 5 seconds.");
-            return false;
+            lockAccount();
+            startTime = System.currentTimeMillis();
         }
         return true;
     }
@@ -65,6 +60,7 @@ public class TerminalImpl implements Terminal {
     @Override
     public double checkAmount() throws IsNotLoggedInException, AccountIsLockedException {
         if (pinValidator.isPinEntered()) {
+            checkTime();
             if (!isAccountLocked()) {
                 return server.checkAmount();
             } else {
@@ -79,6 +75,7 @@ public class TerminalImpl implements Terminal {
     @Override
     public void putMoney(double sum) throws IsNotLoggedInException, BadSumException, AccountIsLockedException {
         if (pinValidator.isPinEntered()) {
+            checkTime();
             if (!isAccountLocked()) {
                 if (server.checkSum(sum)) {
                     server.putMoney(sum);
@@ -97,6 +94,7 @@ public class TerminalImpl implements Terminal {
     @Override
     public void withdrawMoney(double sum) throws IsNotLoggedInException, BadSumException, AccountIsLockedException {
         if (pinValidator.isPinEntered()) {
+            checkTime();
             if (!isAccountLocked()) {
                 if (server.checkSum(sum)) {
                     server.withdrawMoney(sum);

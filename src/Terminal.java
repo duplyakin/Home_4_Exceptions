@@ -1,7 +1,4 @@
-import Exceptions.AccountIsLockedException;
-import Exceptions.BadPinException;
-import Exceptions.BadSumException;
-import Exceptions.IsNotLoggedInException;
+import Exceptions.*;
 
 /**
  * Created by Vlad on 12.11.2016.
@@ -13,5 +10,5 @@ public interface Terminal {
 
     void withdrawMoney(double sum) throws BadSumException, IsNotLoggedInException, AccountIsLockedException;
 
-    boolean checkPin(int pincode);
+    boolean checkPin(int pincode) throws BadPinException;
 }

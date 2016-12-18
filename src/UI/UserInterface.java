@@ -9,4 +9,6 @@ public interface UserInterface {
     void showError(String message);
     void showMessage(String message);
     String askQuestion(String message);
+    int getPin();
+    int getCommend();
 }
